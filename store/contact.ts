@@ -34,13 +34,11 @@ export const mutations = {
   },
 
   editContact(state: any, contact: any){
-    for(var i =0; i<state.contacts.length; i++){
-      if(state.contacts[i].id === contact.id){
-        state.contacts[i].firstName = contact.firstName;
-        state.contacts[i].lastName = contact.lastName;
-        state.contacts[i].cellphone = contact.cellphone;
-        break;
-      }
+    const selectedContact = state.contacts.find((c: { id: String; }) => c.id == contact.id)
+    if(selectedContact){
+      selectedContact.firstName = contact.firstName;
+      selectedContact.lastName = contact.lastName;
+      selectedContact.cellphone = contact.cellphone;
     }
   }
 };
