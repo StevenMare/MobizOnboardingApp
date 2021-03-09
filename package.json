@@ -15,7 +15,11 @@
     "@nuxt/typescript-runtime": "^0.4.10",
     "@nuxtjs/axios": "^5.11.0",
     "concurrently": "^5.2.0",
-    "nuxt": "^2.14.0"
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "nuxt": "^2.14.0",
+    "swagger": "^0.7.5",
+    "swagger-ui-express": "^4.1.6"
   },
   "devDependencies": {
     "@nuxt/typescript-build": "^1.0.3",
@@ -35,5 +39,20 @@
     "prettier": "^2.0.5",
     "ts-jest": "^26.1.0",
     "vue-jest": "^3.0.4"
-  }
+  },
+  "description": "## Overview This assessment application consists of a [Nuxt](https://nuxtjs.org) frontend and an [Express](https://expressjs.com) backend. See [here](#technology-stack) for more details on the application's tech stack.",
+  "main": "jest.config.js",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/StevenMare/MobizOnboardingApp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/StevenMare/MobizOnboardingApp/issues"
+  },
+  "homepage": "https://github.com/StevenMare/MobizOnboardingApp#readme"
 }

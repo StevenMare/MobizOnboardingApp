@@ -1,3 +1,13 @@
+# Updates - Steven Mare
+Added an edit contact button per entry which opens edit contact modal.
+Edit-contact component takes in contact object as incoming prop.
+When showEditContactDialog is set to true, edit-contact uses value in contact prop to populate dialog with initial contact data.
+Editing data and clicking update will update associated contact in contacts array.
+
+Assumptions:
+All contact ids are unique
+All contacts have id, first name, last name, and cellphone number.
+
 # Mobiz Assessment
 
 ## Overview

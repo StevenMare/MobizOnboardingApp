@@ -8,6 +8,7 @@
     </div>
 
     <AddContact />
+    <EditContact :contact = editableContact />
 
     <v-data-table
       :headers="headers"
@@ -19,7 +20,16 @@
       hide-default-footer
       class="elevation-1 mt-4"
       @page-count="pageCount = $event"
-    />
+    >
+      <template #[`item.edit`] ="{ item }">
+        <v-icon
+          small
+        @click.stop="editContact(item)"
+      >
+        mdi-pencil
+      </v-icon>
+      </template>
+    </v-data-table>
     <div class="d-flex justify-center">
       <v-pagination v-model="page" :length="pageCount" />
     </div>
@@ -58,7 +68,14 @@ export default Vue.extend({
         { text: "First Name", value: "firstName" },
         { text: "Last Name", value: "lastName" },
         { text: "Cellphone", value: "cellphone" },
+        { text: 'Edit', value: 'edit', sortable: false }
       ],
+      editableContact: {
+        id: "",
+        firstName: "",
+        lastName: "",
+        cellphone: ""
+      },
     };
   },
   computed: {
@@ -66,6 +83,7 @@ export default Vue.extend({
     ...mapState("contact", {
       showNotifications: "showNotification",
       notificationMessage: "notificationMessage",
+      contacts: "contacts"
     }),
     showNotification: {
       get(): any {
@@ -79,12 +97,17 @@ export default Vue.extend({
   methods: {
     ...mapActions("contact", {
       updateAddContactDialog: "updateAddContactDialog",
+      updateEditContactDialog: "updateEditContactDialog",
       updateShowNotification: "updateShowNotification",
       loadContacts: "loadContacts",
     }),
     addContact() {
       this.updateAddContactDialog(true);
     },
+    editContact(item: any){
+      this.editableContact = item;
+      this.updateEditContactDialog(true);
+    }
   },
 });
 </script>
