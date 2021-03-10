@@ -7,8 +7,11 @@
       </v-btn>
     </div>
 
-    <AddContact />
-    <EditContact :contact = editableContact />
+    <AddContact :visibility = showAddContactDialog 
+      v-on:hide = "hideAddContactDialog"/>
+    <EditContact :visibility = showEditContactDialog 
+      :contact = editableContact 
+      v-on:hide = "hideEditContactDialog"/>
 
     <v-data-table
       :headers="headers"
@@ -40,7 +43,7 @@
         <v-btn
           class="black--text"
           color="grey lighten-4"
-          @click="showNotification = false"
+          @click="hideNotification()"
         >
           Close
         </v-btn>
@@ -76,10 +79,11 @@ export default Vue.extend({
         lastName: "",
         cellphone: ""
       },
+      showEditContactDialog: false,
+      showAddContactDialog: false
     };
   },
   computed: {
-    ...mapState("contact", ["contacts"]),
     ...mapState("contact", {
       showNotifications: "showNotification",
       notificationMessage: "notificationMessage",
@@ -89,24 +93,27 @@ export default Vue.extend({
       get(): any {
         return this.showNotifications;
       },
-      set(value): void {
-        this.updateShowNotification(value);
-      },
+      set(value): any{
+        if(!value){
+          this.hideNotification();
+        }
+      }
     },
   },
   methods: {
-    ...mapActions("contact", {
-      updateAddContactDialog: "updateAddContactDialog",
-      updateEditContactDialog: "updateEditContactDialog",
-      updateShowNotification: "updateShowNotification",
-      loadContacts: "loadContacts",
-    }),
+    ...mapActions("contact", ["hideNotification"]),
     addContact() {
-      this.updateAddContactDialog(true);
+      this.showAddContactDialog = true;
     },
     editContact(item: any){
       this.editableContact = item;
-      this.updateEditContactDialog(true);
+      this.showEditContactDialog = true;
+    },
+    hideAddContactDialog(){
+      this.showAddContactDialog = false;
+    },
+    hideEditContactDialog(){
+      this.showEditContactDialog = false;
     }
   },
 });

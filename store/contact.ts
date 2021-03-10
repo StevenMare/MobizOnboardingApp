@@ -3,20 +3,10 @@ import axios from "axios";
 export const state = () => ({
   contacts: [],
   notificationMessage: '',
-  showAddContactDialog: false,
-  showEditContactDialog: false,
   showNotification: false
 });
 
 export const mutations = {
-  setAddContactDialog(state: any, showAddContactDialog: boolean) {
-    state.showAddContactDialog = showAddContactDialog;
-  },
-
-  setEditContactDialog(state: any, showEditContactDialog: boolean){
-    state.showEditContactDialog = showEditContactDialog;
-  },
-
   setNotificationMessage(state: any, notificationMessage: string) {
     state.notificationMessage = notificationMessage;
   },
@@ -34,7 +24,7 @@ export const mutations = {
   },
 
   editContact(state: any, contact: any){
-    const selectedContact = state.contacts.find((c: { id: String; }) => c.id == contact.id)
+    const selectedContact = state.contacts.find((c: { id: String; }) => c.id === contact.id)
     if(selectedContact){
       selectedContact.firstName = contact.firstName;
       selectedContact.lastName = contact.lastName;
@@ -44,17 +34,14 @@ export const mutations = {
 };
 
 export const actions = {
-  updateAddContactDialog(context: any, payload: any) {
-    context.commit('setAddContactDialog', payload);
-  },
-
-  updateEditContactDialog({ commit }: any, payload: any){
-    commit('setEditContactDialog', payload);
-  },
-
-  updateShowNotification({ commit }: any, { show, message }: any) {
+  showNotification({ commit }: any, message: any) {
     commit('setNotificationMessage', message);
-    commit('setShowNotification', show);
+    commit('setShowNotification', true);
+  },
+
+  hideNotification({ commit }: any){
+    commit('setNotificationMessage', "");
+    commit('setShowNotification', false);
   },
 
   async loadContacts({ commit }: any) {

@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="showAddContactDialog" @click:outside="resetContactForm" width="450">
+  <v-dialog :value="visibility" @click:outside="resetContactForm" width="450">
     <v-card>
       <v-form @submit.prevent="saveAndCloseForm">
         <v-container class="px-11 py-7">
@@ -73,6 +73,9 @@ import { mapState, mapActions } from "vuex";
 
 export default Vue.extend({
   name: "AddContact",
+    props: {
+      visibility: Boolean
+  },
   data() {
     return {
       showConfirmationBox: false,
@@ -82,19 +85,11 @@ export default Vue.extend({
       cellphone: ""
     };
   },
-  computed: {
-    ...mapState("contact", {
-      showAddContactDialog: "showAddContactDialog",
-    }),
-  },
   methods: {
-    ...mapActions("contact", {
-      createContact: "createContact",
-      updateAddContactDialog: "updateAddContactDialog",
-      updateShowNotification: "updateShowNotification",
-    }),
+    ...mapActions("contact", ["createContact",
+    "showNotification"]),
     closeDialog() {
-      this.updateAddContactDialog(false);
+      this.$emit('hide');
     },
     resetContactForm() {
       this.closeDialog();
@@ -112,15 +107,9 @@ export default Vue.extend({
       this.closeDialog();
 
       if (result && result.status === 201) {
-        this.updateShowNotification({
-          show: true,
-          message: "Contact successfuly saved.",
-        });
+        this.showNotification("Contact successfuly saved.");
       } else {
-        this.updateShowNotification({
-          show: true,
-          message: "Contact could not be saved. Please try again.",
-        });
+        this.showNotification("Contact could not be saved. Please try again.");
       }
     },
     async saveContact(): Promise<any> {

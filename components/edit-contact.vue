@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="showEditContactDialog" @click:outside="resetContactForm" width="450">
+  <v-dialog :value="visibility" @click:outside="resetContactForm" width="450">
     <v-card>
       <v-form @submit.prevent="saveAndCloseForm">
         <v-container class="px-11 py-7">
@@ -57,7 +57,7 @@
           </v-row>
           <v-row class="justify-end mt-6">
             <v-card-actions class="pr-0">
-              <v-btn outlined color="primary" @click.stop="resetContactForm">Cancel</v-btn>
+              <v-btn outlined color="primary" @click="resetContactForm">Cancel</v-btn>
               <v-btn type="submit" color="primary">Update Contact</v-btn>
             </v-card-actions>
           </v-row>
@@ -75,8 +75,10 @@ export default Vue.extend({
   name: "EditContact",
   props: {
       contact: {
-        type: Object
-      }
+        type: Object,
+        required: true
+      },
+      visibility: Boolean
   },
   data() {
     return {
@@ -88,7 +90,7 @@ export default Vue.extend({
     };
   },
   watch: { 
-    showEditContactDialog: function(newVal) {
+    visibility: function(newVal) {
       if(newVal){
         this.id = this.contact.id,
         this.firstName = this.contact.firstName,
@@ -97,20 +99,12 @@ export default Vue.extend({
       }
     },
   },
-  computed: {
-    ...mapState("contact", {
-      showEditContactDialog: "showEditContactDialog",
-      contacts: "contacts"
-    })
-  },
   methods: {
-    ...mapActions("contact", {
-      updateContact: "updateContact",
-      updateEditContactDialog: "updateEditContactDialog",
-      updateShowNotification: "updateShowNotification",
-    }),
+    ...mapActions("contact", ['updateContact' , 
+      'showNotification'
+    ]),
     closeDialog() {
-      this.updateEditContactDialog(false);
+      this.$emit('hide');
     },
     resetContactForm() {
       this.closeDialog();
@@ -128,15 +122,9 @@ export default Vue.extend({
       this.closeDialog();
 
       if (result && result.status === 200) {
-        this.updateShowNotification({
-          show: true,
-          message: "Contact successfuly updated.",
-        });
+        this.showNotification("Contact successfuly updated.");
       } else {
-        this.updateShowNotification({
-          show: true,
-          message: "Contact could not be updated. Please try again.",
-        });
+        this.showNotification("Contact could not be updated. Please try again.");
       }
     },
     async saveContact(): Promise<any> {
