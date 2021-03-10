@@ -7,7 +7,11 @@
       </v-btn>
     </div>
 
-    <AddContact />
+    <AddContact :visibility = showAddContactDialog 
+      v-on:hide = "hideAddContactDialog"/>
+    <EditContact :visibility = showEditContactDialog 
+      :contact = editableContact 
+      v-on:hide = "hideEditContactDialog"/>
 
     <v-data-table
       :headers="headers"
@@ -19,7 +23,16 @@
       hide-default-footer
       class="elevation-1 mt-4"
       @page-count="pageCount = $event"
-    />
+    >
+      <template #[`item.edit`] ="{ item }">
+        <v-icon
+          small
+        @click.stop="editContact(item)"
+      >
+        mdi-pencil
+      </v-icon>
+      </template>
+    </v-data-table>
     <div class="d-flex justify-center">
       <v-pagination v-model="page" :length="pageCount" />
     </div>
@@ -30,7 +43,7 @@
         <v-btn
           class="black--text"
           color="grey lighten-4"
-          @click="showNotification = false"
+          @click="hideNotification()"
         >
           Close
         </v-btn>
@@ -58,33 +71,50 @@ export default Vue.extend({
         { text: "First Name", value: "firstName" },
         { text: "Last Name", value: "lastName" },
         { text: "Cellphone", value: "cellphone" },
+        { text: 'Edit', value: 'edit', sortable: false }
       ],
+      editableContact: {
+        id: "",
+        firstName: "",
+        lastName: "",
+        cellphone: ""
+      },
+      showEditContactDialog: false,
+      showAddContactDialog: false
     };
   },
   computed: {
-    ...mapState("contact", ["contacts"]),
     ...mapState("contact", {
       showNotifications: "showNotification",
       notificationMessage: "notificationMessage",
+      contacts: "contacts"
     }),
     showNotification: {
       get(): any {
         return this.showNotifications;
       },
-      set(value): void {
-        this.updateShowNotification(value);
-      },
+      set(value): any{
+        if(!value){
+          this.hideNotification();
+        }
+      }
     },
   },
   methods: {
-    ...mapActions("contact", {
-      updateAddContactDialog: "updateAddContactDialog",
-      updateShowNotification: "updateShowNotification",
-      loadContacts: "loadContacts",
-    }),
+    ...mapActions("contact", ["hideNotification"]),
     addContact() {
-      this.updateAddContactDialog(true);
+      this.showAddContactDialog = true;
     },
+    editContact(item: any){
+      this.editableContact = item;
+      this.showEditContactDialog = true;
+    },
+    hideAddContactDialog(){
+      this.showAddContactDialog = false;
+    },
+    hideEditContactDialog(){
+      this.showEditContactDialog = false;
+    }
   },
 });
 </script>

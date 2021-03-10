@@ -5,7 +5,7 @@
         <v-container class="px-11 py-7">
           <v-row class="mb-2">
             <v-col>
-              <h1 class="headline">Add Contact</h1>
+              <h1 class="headline">Edit Contact</h1>
             </v-col>
             <v-col class="d-flex justify-end">
               <v-btn icon @click="resetContactForm">
@@ -57,8 +57,8 @@
           </v-row>
           <v-row class="justify-end mt-6">
             <v-card-actions class="pr-0">
-              <v-btn outlined color="primary" @click.stop="resetContactForm">Cancel</v-btn>
-              <v-btn type="submit" color="primary">Create Contact</v-btn>
+              <v-btn outlined color="primary" @click="resetContactForm">Cancel</v-btn>
+              <v-btn type="submit" color="primary">Update Contact</v-btn>
             </v-card-actions>
           </v-row>
         </v-container>
@@ -72,8 +72,12 @@ import Vue from "vue";
 import { mapState, mapActions } from "vuex";
 
 export default Vue.extend({
-  name: "AddContact",
-    props: {
+  name: "EditContact",
+  props: {
+      contact: {
+        type: Object,
+        required: true
+      },
       visibility: Boolean
   },
   data() {
@@ -85,9 +89,20 @@ export default Vue.extend({
       cellphone: ""
     };
   },
+  watch: { 
+    visibility: function(newVal) {
+      if(newVal){
+        this.id = this.contact.id,
+        this.firstName = this.contact.firstName,
+        this.lastName = this.contact.lastName,
+        this.cellphone = this.contact.cellphone
+      }
+    },
+  },
   methods: {
-    ...mapActions("contact", ["createContact",
-    "showNotification"]),
+    ...mapActions("contact", ['updateContact' , 
+      'showNotification'
+    ]),
     closeDialog() {
       this.$emit('hide');
     },
@@ -106,15 +121,16 @@ export default Vue.extend({
       this.clearForm();
       this.closeDialog();
 
-      if (result && result.status === 201) {
-        this.showNotification("Contact successfuly saved.");
+      if (result && result.status === 200) {
+        this.showNotification("Contact successfuly updated.");
       } else {
-        this.showNotification("Contact could not be saved. Please try again.");
+        this.showNotification("Contact could not be updated. Please try again.");
       }
     },
     async saveContact(): Promise<any> {
-      const createContactResponse: any = await this.createContact({
+      const createContactResponse: any = await this.updateContact({
         contact: {
+          id: this.id,
           firstName: this.firstName,
           lastName: this.lastName,
           cellphone: this.cellphone,

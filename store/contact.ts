@@ -3,15 +3,10 @@ import axios from "axios";
 export const state = () => ({
   contacts: [],
   notificationMessage: '',
-  showAddContactDialog: false,
   showNotification: false
 });
 
 export const mutations = {
-  setAddContactDialog(state: any, showAddContactDialog: boolean) {
-    state.showAddContactDialog = showAddContactDialog;
-  },
-
   setNotificationMessage(state: any, notificationMessage: string) {
     state.notificationMessage = notificationMessage;
   },
@@ -26,17 +21,27 @@ export const mutations = {
 
   addContact(state: any, contact: any) {
     state.contacts.push(contact);
+  },
+
+  editContact(state: any, contact: any){
+    const selectedContact = state.contacts.find((c: { id: String; }) => c.id === contact.id)
+    if(selectedContact){
+      selectedContact.firstName = contact.firstName;
+      selectedContact.lastName = contact.lastName;
+      selectedContact.cellphone = contact.cellphone;
+    }
   }
 };
 
 export const actions = {
-  updateAddContactDialog(context: any, payload: any) {
-    context.commit('setAddContactDialog', payload);
+  showNotification({ commit }: any, message: any) {
+    commit('setNotificationMessage', message);
+    commit('setShowNotification', true);
   },
 
-  updateShowNotification({ commit }: any, { show, message }: any) {
-    commit('setNotificationMessage', message);
-    commit('setShowNotification', show);
+  hideNotification({ commit }: any){
+    commit('setNotificationMessage', "");
+    commit('setShowNotification', false);
   },
 
   async loadContacts({ commit }: any) {
@@ -52,6 +57,16 @@ export const actions = {
     try {
       const response = await axios.post("http://127.0.0.1:3001/contacts", { contact });
       commit("addContact", contact);
+      return response;
+    } catch (error) {
+      // Do something with the error
+    }
+  },
+
+  async updateContact({ commit }: any, { contact }: any) {
+    try {
+      const response = await axios.patch("http://127.0.0.1:3001/contacts/"+contact.id, { contact });
+      commit("editContact", contact);
       return response;
     } catch (error) {
       // Do something with the error
